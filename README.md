@@ -137,3 +137,5 @@ qiime taxa barplot --i-table rarefied/otus_rar_10K.qza --i-taxonomy taxonomy/tax
 ```
 <img width="966" alt="Снимок экрана 2024-05-12 в 14 53 25" src="https://github.com/natsyam/applied-microbiome-analysis-course/assets/146081042/c1b7ac3c-c2a2-43db-9126-53629eb66888">
 
+sources:
+https://telatin.github.io/microbiome-bioinformatics/Metabarcoding-deblur/
