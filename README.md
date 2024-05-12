@@ -1,5 +1,12 @@
 # applied-microbiome-analysis-course
 
+Data:
+* SRR28803612
+* SRR28803626
+* SRR28803646
+* SRR28803656
+* SRR28803668
+
 ## **1. Installing QIIME2**
    
 ```
