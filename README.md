@@ -146,3 +146,63 @@ qiime taxa barplot --i-table rarefied/otus_rar_10K.qza --i-taxonomy taxonomy/tax
 
 sources:
 https://telatin.github.io/microbiome-bioinformatics/Metabarcoding-deblur/
+
+---
+Next part was done in Google Collab
+---
+
+## **7. PICRUST**
+
+Installing Picrust:
+
+```
+!wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+!bash Miniconda3-latest-Linux-x86_64.sh -bfp /usr/local
+!wget https://data.qiime2.org/distro/core/qiime2-2023.2-py38-linux-conda.yml
+!conda env create -n qiime2-2023.2 --file qiime2-2023.2-py38-linux-conda.yml
+!source activate qiime2-2023.2 && conda install q2-picrust2=2023.2 -c conda-forge -c bioconda -c gavinmdouglas
+```
+> We need the data from otus/feature-table.biom with ASV
+
+Need to convert the output of qiime into .qza format for Picrust:
+
+```
+!source activate qiime2-2023.2 && qiime tools import \
+  --input-path /content/feature-table.biom \
+  --type 'FeatureTable[Frequency]' \
+  --input-format BIOMV210Format \
+  --output-path /content/feature_table_biom.qza
+  --output-path feature_table_biom.qza
+
+!source activate qiime2-2023.2 && qiime tools import \
+  --input-path /content/dna-sequences.fasta \
+  --type 'FeatureData[Sequence]' \
+  --output-path /content/dna_sequences.qza
+```
+Run Picrust:
+```
+!source activate qiime2-2023.2 && qiime picrust2 full-pipeline \
+   --i-table /content/feature_table_biom.qza \
+   --i-seq /content/dna_sequences.qza \
+   --output-dir /content/q2-picrust2_output \
+   --p-placement-tool sepp \
+   --p-threads 1 \
+   --p-hsp-method pic \
+   --p-max-nsti 2 \
+   --verbose
+```
+We've got 3 files: ko_metagenome.qza, ec_metagenome.qza, pathway_abundance.qza
+
+Convert the output to .tsv:
+```
+qiime tools export --input-path "dz2/ko_metagenome.qza" --output-path "dz2"      
+biom convert -i "dz2/feature-table.biom" -o "dz2/ko_metagenome.txt" --to-tsv
+```
+The part of the table we've got:
+
+| OTU ID | SRR21066834 | SRR21066845 | SRR21066823 | SRR21066856 | SRR21066812 |
+|-------|-------------|-------------|-------------|-------------|-------------|
+| K00001 | 3499.50 | 2613.93 | 3267.57 | 3258.68 | 3297.22 |
+| K00002 | 321.38 | 59.84 | 106.99 | 109.60 | 107.42 |
+| K00003 | 7773.16 | 3865.48 | 5145.90 | 5200.61 | 5029.77 |
+| K00004 | 368.90 | 869.87 | 264.70 | 242.82 | - |
